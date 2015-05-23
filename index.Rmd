@@ -1,0 +1,73 @@
+---
+title       : Shiny Project
+subtitle    : Random Forest for Longley data
+author      : Cheng Wang
+job         : 
+framework   : io2012   # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+
+## Introduction
+
+The Shiny app use random forest as machine learning algorithm and the highly collinear data set Longley as training set to show how to select the parameters for random forest. In this shiny app:
+
+1. Longley data set is discussed. 
+2. Random forest parameter mtry is discussed. 
+3. Both parameters mtry and ntree are discussed.
+
+Note:
+
+- The random forest is discussed in the Practical Machine Learning course in Coursera. The detail algorithm is not discussed here.
+
+---
+
+## Data 
+
+Longley data
+- 7 variables
+- Target variable: Employed
+- 6 Features
+- Highly collinear as the figure in the shiny app
+
+```{r}
+library(MASS)
+names(longley)
+```
+
+---
+
+
+## mtry
+
+`caret` package is used for selecting mtry as the code below. Plots also shown in the shiny app.
+
+```{r}
+suppressMessages(library(MASS));suppressMessages(library(caret));
+rffitscan = train(Employed ~ ., data = longley, tuneLength=5)
+rffitscan$results
+```
+
+Two metrics can be used for selecting the best mtry.
+
+1. RMSE (root mean square error) or MSE (mean square erro);
+2. Rsquared
+
+
+--- 
+
+## ntree and mtry
+
+Besides `mtry`, another parameter for random forest is `ntree`. plots of MSE (or Rsquare) versus number of trees are shown in the shiny app. Both mtry and ntree can be tuned in shiny app.
+
+
+```{r fig.height=4, fig.width=7, fig.align='center'}
+mbest=2
+suppressMessages(library(MASS));suppressMessages(library(randomForest));set.seed(1)
+rffit = randomForest(Employed ~ ., data = longley, mtry=mbest, ntree=5000)
+plot(rffit$mse, xlab="trees", ylab="MSE", type="l",pch=16)
+```

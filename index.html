@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shiny Project</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Shiny Project">
+  <meta name="author" content="Cheng Wang">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Shiny Project</h1>
+    <h2>Random Forest for Longley data</h2>
+    <p>Cheng Wang<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The Shiny app use random forest as machine learning algorithm and the highly collinear data set Longley as training set to show how to select the parameters for random forest. In this shiny app:</p>
+
+<ol>
+<li>Longley data set is discussed. </li>
+<li>Random forest parameter mtry is discussed. </li>
+<li>Both parameters mtry and ntree are discussed.</li>
+</ol>
+
+<p>Note:</p>
+
+<ul>
+<li>The random forest is discussed in the Practical Machine Learning course in Coursera. The detail algorithm is not discussed here.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Longley data</p>
+
+<ul>
+<li>7 variables</li>
+<li>Target variable: Employed</li>
+<li>6 Features</li>
+<li>Highly collinear as the figure in the shiny app</li>
+</ul>
+
+<pre><code class="r">library(MASS)
+names(longley)
+</code></pre>
+
+<pre><code>## [1] &quot;GNP.deflator&quot; &quot;GNP&quot;          &quot;Unemployed&quot;   &quot;Armed.Forces&quot;
+## [5] &quot;Population&quot;   &quot;Year&quot;         &quot;Employed&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>mtry</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><code>caret</code> package is used for selecting mtry as the code below. Plots also shown in the shiny app.</p>
+
+<pre><code class="r">suppressMessages(library(MASS));suppressMessages(library(caret));
+rffitscan = train(Employed ~ ., data = longley, tuneLength=5)
+rffitscan$results
+</code></pre>
+
+<pre><code>##   mtry     RMSE  Rsquared    RMSESD RsquaredSD
+## 1    2 1.214886 0.8629211 0.4842170  0.2023636
+## 2    3 1.242251 0.8581076 0.5085266  0.2075792
+## 3    4 1.224036 0.8618742 0.4991155  0.2042514
+## 4    5 1.222141 0.8598252 0.5050756  0.2097231
+## 5    6 1.225497 0.8609199 0.4922192  0.2033362
+</code></pre>
+
+<p>Two metrics can be used for selecting the best mtry.</p>
+
+<ol>
+<li>RMSE (root mean square error) or MSE (mean square erro);</li>
+<li>Rsquared</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>ntree and mtry</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Besides <code>mtry</code>, another parameter for random forest is <code>ntree</code>. plots of MSE (or Rsquare) versus number of trees are shown in the shiny app. Both mtry and ntree can be tuned in shiny app.</p>
+
+<pre><code class="r">mbest=2
+suppressMessages(library(MASS));suppressMessages(library(randomForest));set.seed(1)
+rffit = randomForest(Employed ~ ., data = longley, mtry=mbest, ntree=5000)
+plot(rffit$mse, xlab=&quot;trees&quot;, ylab=&quot;MSE&quot;, type=&quot;l&quot;,pch=16)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" /></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Introduction'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Data'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='mtry'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='ntree and mtry'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
